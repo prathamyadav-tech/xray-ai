@@ -1,0 +1,21 @@
+flowchart TD
+  A([Start: User opens app]) --> B[Upload chest X-ray<br/>PNG / JPG]
+  B --> C{Valid file?<br/>type, size, readable}
+  C -- No --> E1[Show error message] --> B
+  C -- Yes --> D[Preprocess<br/>grayscale, resize 224x224, normalize]
+  D --> F[DenseNet121<br/>feature extraction]
+  F --> G[Classifier head + sigmoid]
+  G --> H[Prediction scores<br/>Pneumonia, Cardiomegaly,<br/>Effusion, Pneumothorax]
+  H --> I[User selects finding]
+  I --> J[Grad-CAM<br/>gradients from last conv block]
+  J --> K[Heatmap overlay<br/>OpenCV blend]
+  H --> L[Result dashboard]
+  K --> L
+  L --> M[/Original + Preprocessed + Scores + Heatmap/]
+  M --> N([Human expert review<br/>Not a medical diagnosis])
+  classDef io fill:#e8f1ff,stroke:#2f6fdd,color:#0b2a5b
+  classDef ml fill:#fff1e0,stroke:#d9822b,color:#5b3200
+  classDef warn fill:#ffe8e8,stroke:#d93b3b,color:#5b0b0b
+  class B,M,L io
+  class F,G,H,J,K ml
+  class E1,N warn

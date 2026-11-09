@@ -1,0 +1,11 @@
+torch>=2.1
+torchvision>=0.16
+torchxrayvision>=1.2
+grad-cam>=1.5
+streamlit>=1.40
+opencv-python-headless>=4.8
+scikit-image>=0.22
+Pillow>=10
+numpy
+pandas
+pytest

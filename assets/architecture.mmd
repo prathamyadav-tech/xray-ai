@@ -1,0 +1,29 @@
+flowchart TB
+  USER([User / Browser])
+  subgraph L1[1 - Presentation layer: Streamlit or Gradio]
+    direction LR
+    UI[Upload widget] --- SEL[Finding selector] --- BAN[Disclaimer banner] --- DASH[Results dashboard]
+  end
+  subgraph L2[2 - Application layer: Python]
+    direction LR
+    VAL[Validation] --> PRE[Preprocessing<br/>OpenCV, PIL, NumPy] --> PRED[Inference service<br/>predict.py] --> XAI[Grad-CAM<br/>gradcam.py]
+  end
+  subgraph L3[3 - ML layer: PyTorch]
+    direction LR
+    MODEL[DenseNet121<br/>+ 4-class head] --- WTS[(Weights<br/>TorchXRayVision / fine-tuned)]
+  end
+  subgraph L4[4 - Offline training: Kaggle or Colab GPU]
+    direction LR
+    DATA[(NIH ChestX-ray14<br/>patient-level split)] --> TR[train.py<br/>BCEWithLogitsLoss] --> EVAL[Evaluation<br/>AUROC per finding]
+  end
+  subgraph L5[5 - Deployment]
+    direction LR
+    GH[GitHub repo] --> HF[Hugging Face Spaces]
+  end
+  USER --> L1
+  L1 -->|image + selected finding| L2
+  L2 -->|tensor| L3
+  L3 -->|scores + feature maps| L2
+  L2 -->|scores + heatmap overlay| L1
+  L4 -->|trained weights| WTS
+  L5 -.hosts.-> L1
